@@ -3,7 +3,7 @@ package element;
 public class Link {
 
 	private AbstractNode target;
-	private float weight;
+	private float distance;
 	private int nodeId;
 	private boolean select;
 
@@ -11,13 +11,13 @@ public class Link {
 		this(null, -1);
 	}
 
-	public Link(AbstractNode target, float weight) {
-		this(target, weight, 0);
+	public Link(AbstractNode target, float distance) {
+		this(target, distance, 0);
 	}
 
-	public Link(AbstractNode target, float weight, int nodeId) {
+	public Link(AbstractNode target, float distance, int nodeId) {
 		this.target = target;
-		this.weight = weight;
+		this.distance = distance;
 		this.nodeId = nodeId;
 	}
 
@@ -37,8 +37,8 @@ public class Link {
 		return target;
 	}
 
-	public float getWeight() {
-		return weight;
+	public float getDistance() {
+		return distance;
 	}
 
 	public void setNodeId(int nodeId) {
@@ -49,14 +49,15 @@ public class Link {
 		this.target = target;
 	}
 
-	public void setWeight(float weight) {
-		this.weight = weight;
+	public void setDistance(float distance) {
+		this.distance = distance;
 	}
 
 	@Override
 	public String toString() {
-		return "Link -> [currentNode_Id] = " + this.nodeId + " [tagerNode_id] = " + this.target.getId() + " [weight] = "
-				+ this.weight;
+		return "Link -> [currentNode_Id] = " + this.nodeId + //
+				" [tagerNode_id] = " + this.target.getId() + //
+				" [distance] = " + this.distance;//
 	}
 
 }

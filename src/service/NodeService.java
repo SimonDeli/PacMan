@@ -16,7 +16,7 @@ public class NodeService {
 
 	public static NodeService getInstance() {
 		if (instance == null)
-			return new NodeService();
+			instance = new NodeService();
 		return instance;
 	}
 
@@ -27,14 +27,6 @@ public class NodeService {
 		}
 		return true;
 	}
-
-//	public void setIdOnAllNodes() {
-//		int id = 0;
-//		for (AbstractNode node : AbstractNode.getNodes()) {
-//			node.setId(id);
-//			id++;
-//		}
-//	}
 
 	public AbstractNode getNodeById(int id) {
 		for (AbstractNode node : AbstractNode.getNodes()) {

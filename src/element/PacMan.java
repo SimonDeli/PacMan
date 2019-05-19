@@ -7,32 +7,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import misc.TypeNode;
-import service.GridService;
+import service.Dijkstra;
 import service.NodeService;
 
 public class PacMan extends AbstractPersonnage implements KeyListener {
 
-	private boolean right = false, left = false, up = false, down = false;
 	private boolean tmpRight = false, tmpLeft = false, tmpUp = false, tmpDown = false;
 	private boolean centered;
 	private boolean wait = false;
 
-	private Dimension actualPos;
 	private Dimension destinationPos;
-	private Dimension anchor;
 
 	private String dir = "";
+	private AbstractNode currentEndNode;
 
-	private static GridService gs;
 	private static NodeService ns;
 
 	public PacMan(int x, int y, int width, int height, int gap) {
 		super(x, y, width, height, gap);
-		gs = GridService.getInstance();
 		ns = NodeService.getInstance();
-		this.anchor = new Dimension(this.getCenterX(), this.getCenterY());
-		this.actualPos = gs.getPositionFromPixel(new Dimension(this.getCenterX(), this.getCenterY()));
 		this.destinationPos = actualPos;
+		this.currentEndNode = ns.getNodeByPos(this.actualPos);
 	}
 
 	@Override
@@ -57,25 +52,6 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 
 	}
 
-	private void direction() {
-		if (this.right) {
-			setAnchorFromType("left");
-			x++;
-		}
-		if (this.left) {
-			setAnchorFromType("right");
-			x--;
-		}
-		if (this.down) {
-			setAnchorFromType("top");
-			y++;
-		}
-		if (this.up) {
-			setAnchorFromType("bottom");
-			y--;
-		}
-	}
-
 	private void interval() {
 		if (centered) {
 			setDestinationPosFromDir(this.dir);
@@ -93,6 +69,13 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 				for (AbstractNode otherNode : AbstractNode.getNodes())
 					if (!current.equals(otherNode) && !otherNode.getType().equals(TypeNode.BEGIN))
 						otherNode.setType(TypeNode.NODE);
+				if (!this.currentEndNode.equals(current)) {
+					this.currentEndNode = current;
+					for (Ghost ghost : Ghost.getGhosts()) {
+						Dijkstra d = new Dijkstra(ghost.getCurrentNode());
+						ghost.setChemin(d.runAlgorithm());
+					}
+				}
 			}
 		}
 	}
@@ -127,21 +110,6 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 		}
 	}
 
-	private void setAnchorFromType(String type) {
-		this.anchor.width = this.getCenterX();
-		this.anchor.height = this.getCenterY();
-
-		if ("left".equals(type)) {
-			this.anchor.width -= this.width / 2;
-		} else if ("right".equals(type)) {
-			this.anchor.width += this.width / 2;
-		} else if ("top".equals(type)) {
-			this.anchor.height -= this.height / 2;
-		} else if ("bottom".equals(type)) {
-			this.anchor.height += this.height / 2;
-		}
-	}
-
 	private void setDestinationPosFromDir(String dir) {
 		switch (dir) {
 		case "up":
@@ -159,7 +127,8 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 		}
 	}
 
-	private void resetDirection(boolean tmp) {
+	@Override
+	protected void resetDirection(boolean tmp) {
 		if (!tmp) {
 			this.right = false;
 			this.left = false;

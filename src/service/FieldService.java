@@ -10,12 +10,20 @@ import misc.TypeNode;
 
 public class FieldService {
 
+	private static FieldService instance;
+
 	private GridService gs;
 	private NodeService ns;
 
-	public FieldService() {
+	private FieldService() {
 		gs = GridService.getInstance();
 		ns = NodeService.getInstance();
+	}
+
+	public static FieldService getInstance() {
+		if (instance == null)
+			instance = new FieldService();
+		return instance;
 	}
 
 	public void createField(Map<Integer, List<String>> data) {

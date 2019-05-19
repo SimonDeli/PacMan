@@ -22,7 +22,7 @@ public class GridService {
 
 	public static synchronized GridService getInstance() {
 		if (instance == null)
-			return new GridService();
+			instance = new GridService();
 		return instance;
 	}
 

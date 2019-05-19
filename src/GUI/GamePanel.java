@@ -12,10 +12,12 @@ import javax.swing.JPanel;
 
 import element.AbstractNode;
 import element.AbstractPersonnage;
+import element.Ghost;
 import element.PacMan;
 import element.Wall;
 import misc.Const;
 import service.FieldService;
+import service.GhostService;
 import service.GridService;
 import service.LinkService;
 import service.ReadTxtService;
@@ -29,23 +31,35 @@ public class GamePanel extends JPanel implements Runnable {
 	private AbstractPersonnage pacMan;
 	private FieldService fs;
 	private LinkService ls;
+	private GhostService ghs;
 
 	private List<AbstractPersonnage> personnages = new ArrayList<>();
 
 	private GamePanel() throws IOException {
 		super();
 		gs = GridService.getInstance();
-		fs = new FieldService();
+		fs = FieldService.getInstance();
 		ls = LinkService.getInstance();
-
 		read = ReadTxtService.getInstance(new File("terrain.txt"));
 		Map<Integer, List<String>> data = read.readFile();
+		ghs = GhostService.getInstance();
+
 		fs.createField(data);
 		ls.craeteLink();
-		Dimension posDepart = new Dimension(9, 11);
-		pacMan = new PacMan(gs.getPixelFromPosition(posDepart).width, gs.getPixelFromPosition(posDepart).height,
+
+		Dimension spawnPM = new Dimension(9, 11);
+		Dimension spawnG = new Dimension(9, 9);
+
+		pacMan = new PacMan(gs.getPixelFromPosition(spawnPM).width, gs.getPixelFromPosition(spawnPM).height,
 				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
+
+		Ghost ghost1 = new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
+				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW));
+
 		personnages.add(pacMan);
+		personnages.add(ghost1);
+
+//		ls.printNodeAndLink();
 
 		this.setPreferredSize(Const.SIZE_F);
 
@@ -82,6 +96,9 @@ public class GamePanel extends JPanel implements Runnable {
 		while (true) {
 			for (AbstractPersonnage personnage : personnages) {
 				personnage.move();
+			}
+			for (Ghost ghost : Ghost.getGhosts()) {
+				ghost.move();
 			}
 
 			try {

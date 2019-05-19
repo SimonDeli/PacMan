@@ -1,4 +1,4 @@
-package main;
+package service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,26 +7,23 @@ import java.util.List;
 import element.AbstractNode;
 import element.Link;
 import misc.TypeNode;
-import service.NodeService;
 
 public class Dijkstra {
 
-	private String name;
-	private List<AbstractNode> chemin;
 	private NodeService ns;
 	private float weightFinal;
+	private AbstractNode beginNode;
 
-	public Dijkstra(String name, List<AbstractNode> node_list) {
+	public Dijkstra(AbstractNode beginNode) {
 		this.ns = NodeService.getInstance();
-		this.name = name;
-		this.chemin = new ArrayList<>();
 		this.weightFinal = 0;
+		this.beginNode = beginNode;
 	}
 
-	public void runAlgorithm() {
+	public List<AbstractNode> runAlgorithm() {
 		ns.initNodeVisited();
 		ns.initNodeWeight();
-		AbstractNode currentNode = AbstractNode.getNodes().get(0);
+		AbstractNode currentNode = beginNode;
 		int security = 0;
 		while (!ns.isAllVisited()) {
 			currentNode.setVisited(true);
@@ -42,15 +39,16 @@ public class Dijkstra {
 				this.weightFinal = node.getWeight();
 			else
 				this.weightFinal = -1;
-		getClosestWay();
+
+		return getClosestWay();
 	}
 
 	private void updateNodeWeight(AbstractNode currentNode) {
 		for (Link link : currentNode.getLinks()) {
 			AbstractNode noeudTarget = link.getTarget();
 			float weight = noeudTarget.getWeight(); // poids du noeuds "target"
-			if (weight == -1 || link.getWeight() + currentNode.getWeight() < weight) {
-				noeudTarget.setWeight(link.getWeight() + currentNode.getWeight());
+			if (weight == -1 || link.getDistance() + currentNode.getWeight() < weight) {
+				noeudTarget.setWeight(link.getDistance() + currentNode.getWeight());
 				noeudTarget.setPrevious(currentNode);
 			}
 		}
@@ -78,17 +76,23 @@ public class Dijkstra {
 		return result;
 	}
 
-	public void getClosestWay() {
-		AbstractNode current = AbstractNode.getNodes().get(AbstractNode.getNodes().size() - 1);
-		this.chemin.add(current);
-		while (!(current.equals(AbstractNode.getNodes().get(0)))) {
+	public List<AbstractNode> getClosestWay() {
+		List<AbstractNode> result = new ArrayList<>();
+		AbstractNode current = AbstractNode.getNodes().get(0);
+		for (AbstractNode node : AbstractNode.getNodes()) {
+			if (node.getType().equals(TypeNode.END))
+				current = node;
+		}
+		result.add(current);
+		while (!(current.equals(beginNode))) {
 			AbstractNode previous = null;
 			if (current.getPrevious() != null)
 				previous = current.getPrevious();
-			this.chemin.add(previous);
+			result.add(previous);
 			current = previous;
 		}
-		Collections.reverse(this.chemin);
+		Collections.reverse(result);
+		return result;
 	}
 
 	public float getWeightFinal() {
@@ -97,21 +101,5 @@ public class Dijkstra {
 
 	public void setWeightFinal(float weightFinal) {
 		this.weightFinal = weightFinal;
-	}
-
-	public List<AbstractNode> getChemin() {
-		return this.chemin;
-	}
-
-	public void setChemin(List<AbstractNode> chemin) {
-		this.chemin = chemin;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 }

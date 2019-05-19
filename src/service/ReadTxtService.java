@@ -24,7 +24,7 @@ public class ReadTxtService {
 
 	public static ReadTxtService getInstance(File file) throws FileNotFoundException {
 		if (instance == null)
-			return new ReadTxtService(file);
+			instance = new ReadTxtService(file);
 		return instance;
 	}
 

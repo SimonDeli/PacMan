@@ -20,7 +20,7 @@ public class LinkService {
 
 	public static LinkService getInstance() {
 		if (instance == null)
-			return new LinkService();
+			instance = new LinkService();
 		return instance;
 	}
 
@@ -48,7 +48,7 @@ public class LinkService {
 			}
 			// down
 			for (int i = currentNode.getPos().height + 1; i <= Const.NBR_ROW; i++) {
-				Dimension currentPos = new Dimension(currentNode.getPos().height, i);
+				Dimension currentPos = new Dimension(currentNode.getPos().width, i);
 				if ("node".equals(gs.getTypeFromPos(currentPos))) {
 					currentNode.addLink(new Link(ns.getNodeByPos(currentPos), -1, currentNode.getId()));
 					break;
@@ -59,7 +59,7 @@ public class LinkService {
 
 			// up
 			for (int i = currentNode.getPos().height - 1; i >= 0; i--) {
-				Dimension currentPos = new Dimension(currentNode.getPos().height, i);
+				Dimension currentPos = new Dimension(currentNode.getPos().width, i);
 				if ("node".equals(gs.getTypeFromPos(currentPos))) {
 					currentNode.addLink(new Link(ns.getNodeByPos(currentPos), -1, currentNode.getId()));
 					break;
@@ -67,10 +67,31 @@ public class LinkService {
 				if ("wall".equals(gs.getTypeFromPos(currentPos)))
 					break;
 			}
+		}
+		initDistanceLink();
+	}
+
+	public void initDistanceLink() {
+		for (AbstractNode current : AbstractNode.getNodes()) {
+			for (Link link : current.getLinks()) {
+				int distance = 0;
+				if (current.getPos().width == link.getTarget().getPos().width)
+					distance = Math.abs((current.getPos().height - link.getTarget().getPos().height));
+				else if (current.getPos().height == link.getTarget().getPos().height) {
+					distance = Math.abs((current.getPos().width - link.getTarget().getPos().width));
+				}
+				link.setDistance(distance);
+			}
+		}
+	}
+
+	public void printNodeAndLink() {
+		for (AbstractNode currentNode : AbstractNode.getNodes()) {
 			System.out.println("-----------");
 			System.out.println(currentNode);
-			System.out.println(currentNode.getLinks());
+			for (Link link : currentNode.getLinks()) {
+				System.out.println("__" + link);
+			}
 		}
-
 	}
 }

@@ -152,7 +152,8 @@ public abstract class AbstractNode {
 		return "Node -> [id] = " + this.id + //
 				" [weight] = " + this.weight + //
 				" [visited] = " + this.visited + //
-				" [position] = " + this.pos;//
+				" [position] = " + this.pos + //
+				" [type] = " + this.type;//
 
 	}
 

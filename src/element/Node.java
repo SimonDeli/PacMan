@@ -8,9 +8,4 @@ public class Node extends AbstractNode {
 		super(x, y, type);
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + " [type] = node";
-	}
-
 }
