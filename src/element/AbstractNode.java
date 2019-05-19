@@ -151,7 +151,8 @@ public abstract class AbstractNode {
 	public String toString() {
 		return "Node -> [id] = " + this.id + //
 				" [weight] = " + this.weight + //
-				" [visited] = " + this.visited;//
+				" [visited] = " + this.visited + //
+				" [position] = " + this.pos;//
 
 	}
 

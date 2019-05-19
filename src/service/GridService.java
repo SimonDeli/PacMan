@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
+import element.AbstractNode;
 import element.AbstractPersonnage;
+import element.Wall;
 import misc.Const;
 
 public class GridService {
@@ -57,6 +59,16 @@ public class GridService {
 
 		result.setSize(x, y);
 		return result;
+	}
+
+	public String getTypeFromPos(Dimension pos) {
+		for (AbstractNode node : AbstractNode.getNodes())
+			if (node.getPos().equals(pos))
+				return "node";
+
+		if (Wall.getDim().contains(pos))
+			return "wall";
+		return null;
 	}
 
 	public boolean isCentered(AbstractPersonnage target) {

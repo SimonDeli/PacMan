@@ -17,6 +17,7 @@ import element.Wall;
 import misc.Const;
 import service.FieldService;
 import service.GridService;
+import service.LinkService;
 import service.ReadTxtService;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -27,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private static GamePanel instance;
 	private AbstractPersonnage pacMan;
 	private FieldService fs;
+	private LinkService ls;
 
 	private List<AbstractPersonnage> personnages = new ArrayList<>();
 
@@ -34,14 +36,17 @@ public class GamePanel extends JPanel implements Runnable {
 		super();
 		gs = GridService.getInstance();
 		fs = new FieldService();
+		ls = LinkService.getInstance();
+
 		read = ReadTxtService.getInstance(new File("terrain.txt"));
 		Map<Integer, List<String>> data = read.readFile();
 		fs.createField(data);
-
+		ls.craeteLink();
 		Dimension posDepart = new Dimension(9, 11);
 		pacMan = new PacMan(gs.getPixelFromPosition(posDepart).width, gs.getPixelFromPosition(posDepart).height,
 				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
 		personnages.add(pacMan);
+
 		this.setPreferredSize(Const.SIZE_F);
 
 		t = new Thread(this);

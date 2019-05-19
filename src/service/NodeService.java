@@ -1,5 +1,7 @@
 package service;
 
+import java.awt.Dimension;
+
 import element.AbstractNode;
 import element.Node;
 import misc.TypeNode;
@@ -37,6 +39,14 @@ public class NodeService {
 	public AbstractNode getNodeById(int id) {
 		for (AbstractNode node : AbstractNode.getNodes()) {
 			if (node.getId() == id)
+				return node;
+		}
+		return null;
+	}
+
+	public AbstractNode getNodeByPos(Dimension pos) {
+		for (AbstractNode node : AbstractNode.getNodes()) {
+			if (node.getPos().equals(pos))
 				return node;
 		}
 		return null;

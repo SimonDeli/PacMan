@@ -44,6 +44,9 @@ public class FieldService {
 				}
 			}
 		}
+//		for (AbstractNode node : AbstractNode.getNodes()) {
+//			System.out.println(node);
+//		}
 	}
 
 	public void createHorizontalWall(int line) {
