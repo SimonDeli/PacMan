@@ -1,8 +1,6 @@
 package service;
 
 import element.AbstractNode;
-import element.BeginNode;
-import element.EndNode;
 import element.Node;
 import misc.TypeNode;
 
@@ -46,7 +44,7 @@ public class NodeService {
 
 	public void initNodeWeight() {
 		for (AbstractNode node : AbstractNode.getNodes()) {
-			node.setWeight((node instanceof BeginNode) ? 0 : -1);
+			node.setWeight((node.getType().equals(TypeNode.BEGIN)) ? 0 : -1);
 		}
 	}
 
@@ -57,13 +55,6 @@ public class NodeService {
 	}
 
 	public AbstractNode getNode(TypeNode type, int x, int y) {
-		switch (type) {
-		case BEGIN:
-			return new BeginNode(x, y);
-		case END:
-			return new EndNode(x, y);
-		default:
-			return new Node(x, y);
-		}
+		return new Node(x, y, type);
 	}
 }

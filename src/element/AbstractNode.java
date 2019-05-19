@@ -1,35 +1,44 @@
 package element;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
+import misc.TypeNode;
 import service.GridService;
 
 public abstract class AbstractNode {
 
+	protected static List<AbstractNode> nodes;
 	private static int compteur = 0;
+
+	protected GridService gs;
+
 	protected int id;
 	protected List<Link> links;
 	protected float weight;
+	protected float width;
+	protected float height;
 	protected boolean visited = false;
 	protected int x;
 	protected int y;
-	protected float width;
-	protected float height;
-	protected int gap;
+
+	protected Dimension pos;
+
 	protected AbstractNode previous;
-	protected static List<AbstractNode> nodes;
-	protected GridService gs;
+
+	protected TypeNode type;
 
 	public AbstractNode() {
-		this(0, 0);
+		this(0, 0, TypeNode.NODE);
 	}
 
-	public AbstractNode(int x, int y) {
+	public AbstractNode(int x, int y, TypeNode type) {
 		gs = GridService.getInstance();
 		this.id = compteur;
+		this.type = type;
 		this.links = new ArrayList<>();
 		this.weight = -1;
 		this.visited = false;
@@ -38,6 +47,7 @@ public abstract class AbstractNode {
 		this.width = gs.getWidthCol();
 		this.height = gs.getHeightCol();
 		this.previous = null;
+		this.pos = gs.getPositionFromPixel(new Dimension(this.getCenterX(), this.getCenterY()));
 		if (nodes == null)
 			nodes = new ArrayList<>();
 		nodes.add(this);
@@ -113,6 +123,30 @@ public abstract class AbstractNode {
 		this.y = y;
 	}
 
+	public TypeNode getType() {
+		return this.type;
+	}
+
+	public void setType(TypeNode type) {
+		this.type = type;
+	}
+
+	public Dimension getPos() {
+		return this.pos;
+	}
+
+	public void setPos(Dimension pos) {
+		this.pos = pos;
+	}
+
+	public int getCenterX() {
+		return this.x + (int) this.width / 2;
+	}
+
+	public int getCenterY() {
+		return this.y + (int) this.height / 2;
+	}
+
 	@Override
 	public String toString() {
 		return "Node -> [id] = " + this.id + //
@@ -122,7 +156,13 @@ public abstract class AbstractNode {
 	}
 
 	public void paint(Graphics g) {
-		g.setColor(Color.RED);
+		if (this.type.equals(TypeNode.NODE))
+			g.setColor(Color.RED);
+		if (this.type.equals(TypeNode.END))
+			g.setColor(Color.GREEN);
+		if (this.type.equals(TypeNode.BEGIN))
+			g.setColor(Color.ORANGE);
+
 		g.fillRect(x, y, Math.round(width), Math.round(height));
 	}
 }

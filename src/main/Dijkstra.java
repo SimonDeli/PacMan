@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import element.AbstractNode;
-import element.EndNode;
 import element.Link;
+import misc.TypeNode;
 import service.NodeService;
 
 public class Dijkstra {
@@ -38,7 +38,7 @@ public class Dijkstra {
 				break;
 		}
 		for (AbstractNode node : AbstractNode.getNodes())
-			if (node instanceof EndNode)
+			if (node.getType().equals(TypeNode.END))
 				this.weightFinal = node.getWeight();
 			else
 				this.weightFinal = -1;

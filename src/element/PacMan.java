@@ -20,7 +20,6 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 	private Dimension actualPos;
 	private Dimension destinationPos;
 	private Dimension anchor;
-	private AbstractNode endNode;
 
 	private String dir = "";
 
@@ -34,7 +33,6 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 		this.anchor = new Dimension(this.getCenterX(), this.getCenterY());
 		this.actualPos = gs.getPositionFromPixel(new Dimension(this.getCenterX(), this.getCenterY()));
 		this.destinationPos = actualPos;
-		this.endNode = ns.getNode(TypeNode.END, x, y);
 	}
 
 	@Override
@@ -86,9 +84,17 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 
 	}
 
+	// A OPTIMISER
 	private void setIntervalEndNode() {
-		this.endNode.setX(this.x - gap / 2);
-		this.endNode.setY(this.y - gap / 2);
+		for (AbstractNode node : AbstractNode.getNodes()) {
+			if (this.actualPos.equals(node.getPos())) {
+				node.setType(TypeNode.END);
+				AbstractNode current = node;
+				for (AbstractNode otherNode : AbstractNode.getNodes())
+					if (!current.equals(otherNode) && !otherNode.getType().equals(TypeNode.BEGIN))
+						otherNode.setType(TypeNode.NODE);
+			}
+		}
 	}
 
 	private boolean isCollide() {
