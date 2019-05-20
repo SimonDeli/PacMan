@@ -45,7 +45,6 @@ public class Ghost extends AbstractPersonnage {
             AbstractNode target = this.chemin.get(0);
             if (!target.getPos().equals(this.actualPos)) {
                 if (target.getPos().height == this.actualPos.height) {
-                    System.out.println("height");
                     if (target.getPos().width > this.actualPos.width) {
                         resetDirection(false);
                         right = true;
@@ -54,7 +53,6 @@ public class Ghost extends AbstractPersonnage {
                         left = true;
                     }
                 } else if (target.getPos().width == this.actualPos.width) {
-                    System.out.println("width");
                     if (target.getPos().height > this.actualPos.height) {
                         resetDirection(false);
                         down = true;
@@ -94,9 +92,6 @@ public class Ghost extends AbstractPersonnage {
 
     public void setChemin(List<AbstractNode> chemin) {
         this.chemin = chemin;
-        // for (AbstractNode node : chemin) {
-        // System.out.println(node);
-        // }
     }
 
     public void setCurrentNode(AbstractNode currentNode) {
