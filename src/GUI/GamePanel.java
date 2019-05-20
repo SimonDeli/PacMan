@@ -14,6 +14,7 @@ import element.AbstractPersonnage;
 import element.Ghost;
 import element.PacMan;
 import element.Wall;
+import main.MainThread;
 import misc.Const;
 import service.FieldService;
 import service.GhostService;
@@ -21,17 +22,17 @@ import service.GridService;
 import service.LinkService;
 import service.ReadTxtService;
 
-public class GamePanel extends JPanel implements Runnable {
+public class GamePanel extends JPanel {
 
     private static GamePanel instance;
 
     public static synchronized GamePanel getInstance() throws IOException {
         if (instance == null)
-            return new GamePanel();
+            instance = new GamePanel();
         return instance;
     }
 
-    private Thread t;
+    private MainThread t;
     private GridService gs;
     private ReadTxtService read;
     private AbstractPersonnage pacMan;
@@ -39,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
     private LinkService ls;
 
     private GhostService ghs;
+    private long fps;
 
     private List<AbstractPersonnage> personnages = new ArrayList<>();
 
@@ -69,9 +71,12 @@ public class GamePanel extends JPanel implements Runnable {
         // ls.printNodeAndLink();
 
         this.setPreferredSize(Const.SIZE_F);
-
-        t = new Thread(this);
+        t = new MainThread(this);
         t.start();
+    }
+
+    public long getFps() {
+        return fps;
     }
 
     public AbstractPersonnage getPacMan() {
@@ -100,45 +105,20 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
 
-    @Override
-    public void run() {
-        long beginTime;
-        int sleepTime = 0;
-        int framesSkipped;
-        long timeDiff;
-        while (true) {
-            try {
-                beginTime = System.currentTimeMillis();
-                framesSkipped = 0;
-                this.update();
-                this.repaint();
-                timeDiff = System.currentTimeMillis() - beginTime;
-                sleepTime = (int) (Const.FRAME_PERIOD - timeDiff);
-                if (sleepTime > 0) {
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                    }
-                }
-                while (sleepTime < 0 && framesSkipped < Const.MAX_FRAM_SKIPS) {
-                    this.update();
-                    sleepTime += Const.FRAME_PERIOD;
-                    framesSkipped++;
-                }
-            } finally {
-            }
-        }
-    };
+    public void setFps(long l) {
+        this.fps = l;
+    }
 
     public void setPacMan(AbstractPersonnage pacMan) {
         this.pacMan = pacMan;
     }
 
-    public void setThread(Thread t) {
+    public void setThread(MainThread t) {
         this.t = t;
     }
 
-    private void update() {
+    public void update() {
+        System.out.println(fps);
         for (AbstractPersonnage personnage : personnages) {
             personnage.move();
         }
