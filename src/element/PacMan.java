@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 
 import misc.Const;
 import misc.TypeNode;
@@ -105,6 +106,7 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 
 	@Override
 	public void move() {
+//		A AMELIORER
 		for (double i = 0; i < speed / Const.MAX_FPS; i++) {
 			this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
 			this.centered = gs.isCentered(this);
@@ -172,7 +174,8 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 					this.currentEndNode = current;
 					for (Ghost ghost : Ghost.getGhosts()) {
 						Dijkstra d = new Dijkstra(ghost.getCurrentNode());
-						ghost.setChemin(d.runAlgorithm());
+						List<AbstractNode> chemin = d.runAlgorithm();
+						ghost.setChemin(chemin);
 					}
 				}
 			}

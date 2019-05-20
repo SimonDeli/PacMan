@@ -80,6 +80,7 @@ public class Ghost extends AbstractPersonnage {
 
 	@Override
 	public void move() {
+//		A AMELIORER
 		for (double i = 0; i < speed / Const.MAX_FPS; i++) {
 			this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
 			findDirection();

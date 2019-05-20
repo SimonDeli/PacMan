@@ -84,7 +84,7 @@ public class Dijkstra {
 				current = node;
 		}
 		result.add(current);
-		while (!(current.equals(beginNode))) {
+		while (!(beginNode.equals(current))) {
 			AbstractNode previous = null;
 			if (current.getPrevious() != null)
 				previous = current.getPrevious();
