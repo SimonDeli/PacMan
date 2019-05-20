@@ -75,7 +75,13 @@ public class GridService {
 		int x = target.getCenterX();
 		int y = target.getCenterY();
 
-		if (Math.round((x % widthCol) - widthCol / 2) == 0 && Math.round((y % heightCol) - heightCol / 2) == 0)
+		int modX = Math.round((x % widthCol) - widthCol / 2);
+		int modY = Math.round((y % heightCol) - heightCol / 2);
+
+		modX = (modX == 1 || modX == -1) ? 0 : modX;
+		modY = (modY == 1 || modY == -1) ? 0 : modY;
+
+		if (modX == 0 && modY == 0)
 			return true;
 		return false;
 	}

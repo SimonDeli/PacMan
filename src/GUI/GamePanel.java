@@ -118,7 +118,6 @@ public class GamePanel extends JPanel {
 	}
 
 	public void update() {
-		System.out.println(fps);
 		for (AbstractPersonnage personnage : personnages) {
 			personnage.move();
 		}
