@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
+import misc.Const;
 import service.GhostService;
 import service.NodeService;
 
@@ -79,9 +80,11 @@ public class Ghost extends AbstractPersonnage {
 
 	@Override
 	public void move() {
-		this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
-		findDirection();
-		direction();
+		for (double i = 0; i < speed / Const.MAX_FPS; i++) {
+			this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
+			findDirection();
+			direction();
+		}
 	}
 
 	@Override

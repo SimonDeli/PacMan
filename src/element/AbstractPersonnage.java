@@ -3,7 +3,6 @@ package element;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
-import misc.Const;
 import service.GridService;
 
 public abstract class AbstractPersonnage {
@@ -40,20 +39,20 @@ public abstract class AbstractPersonnage {
 	protected void direction() {
 		if (this.right) {
 			setAnchorFromType("left");
-			x += speed / Const.MAX_FPS;
+			x++;
 
 		}
 		if (this.left) {
 			setAnchorFromType("right");
-			x -= speed / Const.MAX_FPS;
+			x--;
 		}
 		if (this.down) {
 			setAnchorFromType("top");
-			y += speed / Const.MAX_FPS;
+			y++;
 		}
 		if (this.up) {
 			setAnchorFromType("bottom");
-			y -= speed / Const.MAX_FPS;
+			y--;
 		}
 	}
 

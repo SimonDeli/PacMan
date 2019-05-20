@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import misc.Const;
 import misc.TypeNode;
 import service.Dijkstra;
 import service.NodeService;
@@ -104,14 +105,15 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 
 	@Override
 	public void move() {
-		this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
-		this.centered = gs.isCentered(this);
-		interval();
-		if (wait)
-			waitToMove();
-		if (!isCollide())
-			direction();
-
+		for (double i = 0; i < speed / Const.MAX_FPS; i++) {
+			this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
+			this.centered = gs.isCentered(this);
+			interval();
+			if (wait)
+				waitToMove();
+			if (!isCollide())
+				direction();
+		}
 	}
 
 	@Override
