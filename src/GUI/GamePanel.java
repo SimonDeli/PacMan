@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
-import element.AbstractNode;
 import element.AbstractPersonnage;
 import element.Ghost;
 import element.PacMan;
@@ -24,106 +23,128 @@ import service.ReadTxtService;
 
 public class GamePanel extends JPanel implements Runnable {
 
-	private Thread t;
-	private GridService gs;
-	private ReadTxtService read;
-	private static GamePanel instance;
-	private AbstractPersonnage pacMan;
-	private FieldService fs;
-	private LinkService ls;
-	private GhostService ghs;
+    private static GamePanel instance;
 
-	private List<AbstractPersonnage> personnages = new ArrayList<>();
+    public static synchronized GamePanel getInstance() throws IOException {
+        if (instance == null)
+            return new GamePanel();
+        return instance;
+    }
 
-	private GamePanel() throws IOException {
-		super();
-		gs = GridService.getInstance();
-		fs = FieldService.getInstance();
-		ls = LinkService.getInstance();
-		read = ReadTxtService.getInstance(new File("terrain.txt"));
-		Map<Integer, List<String>> data = read.readFile();
-		ghs = GhostService.getInstance();
+    private Thread t;
+    private GridService gs;
+    private ReadTxtService read;
+    private AbstractPersonnage pacMan;
+    private FieldService fs;
+    private LinkService ls;
 
-		fs.createField(data);
-		ls.craeteLink();
+    private GhostService ghs;
 
-		Dimension spawnPM = new Dimension(9, 11);
-		Dimension spawnG = new Dimension(9, 9);
+    private List<AbstractPersonnage> personnages = new ArrayList<>();
 
-		pacMan = new PacMan(gs.getPixelFromPosition(spawnPM).width, gs.getPixelFromPosition(spawnPM).height,
-				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
+    private GamePanel() throws IOException {
+        super();
+        gs = GridService.getInstance();
+        fs = FieldService.getInstance();
+        ls = LinkService.getInstance();
+        read = ReadTxtService.getInstance(new File("terrain.txt"));
+        Map<Integer, List<String>> data = read.readFile();
+        ghs = GhostService.getInstance();
 
-		Ghost ghost1 = new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
-				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW));
+        fs.createField(data);
+        ls.craeteLink();
 
-		personnages.add(pacMan);
-		personnages.add(ghost1);
+        Dimension spawnPM = new Dimension(9, 11);
+        Dimension spawnG = new Dimension(9, 9);
 
-//		ls.printNodeAndLink();
+        pacMan = new PacMan(gs.getPixelFromPosition(spawnPM).width, gs.getPixelFromPosition(spawnPM).height,
+                (Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
 
-		this.setPreferredSize(Const.SIZE_F);
+        Ghost ghost1 = new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
+                (Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW));
 
-		t = new Thread(this);
-		t.start();
-	}
+        personnages.add(pacMan);
+        personnages.add(ghost1);
 
-	public static synchronized GamePanel getInstance() throws IOException {
-		if (instance == null)
-			return new GamePanel();
-		return instance;
-	}
+        // ls.printNodeAndLink();
 
-	@Override
-	public void paintComponent(Graphics g) {
-		this.reset(g);
+        this.setPreferredSize(Const.SIZE_F);
 
-		for (Wall wall : Wall.getWalls())
-			wall.paint(g);
-		for (AbstractNode node : AbstractNode.getNodes())
-			node.paint(g);
-		for (AbstractPersonnage personnage : personnages)
-			personnage.paint(g);
+        t = new Thread(this);
+        t.start();
+    }
 
-	}
+    public AbstractPersonnage getPacMan() {
+        return this.pacMan;
+    }
 
-	private void reset(Graphics g) {
-		g.fillRect(0, 0, Const.SIZE_F.width, Const.SIZE_F.height);
+    public Thread getThread() {
+        return this.t;
+    }
 
-	}
+    @Override
+    public void paintComponent(Graphics g) {
+        this.reset(g);
 
-	@Override
-	public void run() {
-		while (true) {
-			for (AbstractPersonnage personnage : personnages) {
-				personnage.move();
-			}
-			for (Ghost ghost : Ghost.getGhosts()) {
-				ghost.move();
-			}
+        for (Wall wall : Wall.getWalls())
+            wall.paint(g);
+        // for (AbstractNode node : AbstractNode.getNodes())
+        // node.paint(g);
+        for (AbstractPersonnage personnage : personnages)
+            personnage.paint(g);
 
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			this.repaint();
-		}
-	}
+    }
 
-	public AbstractPersonnage getPacMan() {
-		return this.pacMan;
-	}
+    private void reset(Graphics g) {
+        g.fillRect(0, 0, Const.SIZE_F.width, Const.SIZE_F.height);
 
-	public void setPacMan(AbstractPersonnage pacMan) {
-		this.pacMan = pacMan;
-	}
+    }
 
-	public Thread getThread() {
-		return this.t;
-	}
+    @Override
+    public void run() {
+        long beginTime;
+        int sleepTime = 0;
+        int framesSkipped;
+        long timeDiff;
+        while (true) {
+            try {
+                beginTime = System.currentTimeMillis();
+                framesSkipped = 0;
+                this.update();
+                this.repaint();
+                timeDiff = System.currentTimeMillis() - beginTime;
+                sleepTime = (int) (Const.FRAME_PERIOD - timeDiff);
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException e) {
+                    }
+                }
+                while (sleepTime < 0 && framesSkipped < Const.MAX_FRAM_SKIPS) {
+                    this.update();
+                    sleepTime += Const.FRAME_PERIOD;
+                    framesSkipped++;
+                }
+            } finally {
+            }
+        }
+    };
 
-	public void setThread(Thread t) {
-		this.t = t;
-	}
+    public void setPacMan(AbstractPersonnage pacMan) {
+        this.pacMan = pacMan;
+    }
+
+    public void setThread(Thread t) {
+        this.t = t;
+    }
+
+    private void update() {
+        for (AbstractPersonnage personnage : personnages) {
+            personnage.move();
+        }
+        for (Ghost ghost : Ghost.getGhosts()) {
+            ghost.move();
+        }
+    }
 
 }

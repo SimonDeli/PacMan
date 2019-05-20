@@ -11,94 +11,96 @@ import service.NodeService;
 
 public class Ghost extends AbstractPersonnage {
 
-	private static List<Ghost> ghosts;
-	private GhostService ghs;
-	private NodeService ns;
+    private static List<Ghost> ghosts;
 
-	private List<AbstractNode> chemin;
+    public static List<Ghost> getGhosts() {
+        return ghosts;
+    }
 
-	private AbstractNode currentNode;
+    public static void setGhosts(List<Ghost> ghosts) {
+        Ghost.ghosts = ghosts;
+    }
 
-	public Ghost(int x, int y, int width, int height) {
-		super(x, y, width, height);
-		ns = NodeService.getInstance();
-		ghs = GhostService.getInstance();
-		if (ghosts == null)
-			ghosts = new ArrayList<>();
-		ghosts.add(this);
-		chemin = new ArrayList<>();
-		currentNode = ns.getNodeByPos(this.actualPos);
-	}
+    private GhostService ghs;
 
-	@Override
-	public void paint(Graphics g) {
-		g.setColor(Color.PINK);
-		g.fillOval(this.x, this.y, width, height);
-	}
+    private NodeService ns;
 
-	@Override
-	public void move() {
-		this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
-		findDirection();
-		direction();
-	}
+    private List<AbstractNode> chemin;
 
-	private void findDirection() {
-		if (!this.chemin.isEmpty()) {
-			AbstractNode target = this.chemin.get(0);
-			if (!target.getPos().equals(this.actualPos)) {
-				if (target.getPos().height == this.actualPos.height) {
-					System.out.println("height");
-					if (target.getPos().width > this.actualPos.width) {
-						resetDirection(false);
-						right = true;
-					} else if (target.getPos().width < this.actualPos.width) {
-						resetDirection(false);
-						left = true;
-					}
-				} else if (target.getPos().width == this.actualPos.width) {
-					System.out.println("width");
-					if (target.getPos().height > this.actualPos.height) {
-						resetDirection(false);
-						down = true;
-					} else if (target.getPos().height < this.actualPos.height) {
-						resetDirection(false);
-						up = true;
-					}
-				}
-			} else {
-				this.currentNode = target;
-				resetDirection(false);
-				this.chemin.remove(0);
-			}
-		}
-	}
+    private AbstractNode currentNode;
 
-	public List<AbstractNode> getChemin() {
-		return this.chemin;
-	}
+    public Ghost(int x, int y, int width, int height) {
+        super(x, y, width, height);
+        ns = NodeService.getInstance();
+        ghs = GhostService.getInstance();
+        if (ghosts == null)
+            ghosts = new ArrayList<>();
+        ghosts.add(this);
+        chemin = new ArrayList<>();
+        currentNode = ns.getNodeByPos(this.actualPos);
+    }
 
-	public void setChemin(List<AbstractNode> chemin) {
-		this.chemin = chemin;
-//		for (AbstractNode node : chemin) {
-//			System.out.println(node);
-//		}
-	}
+    private void findDirection() {
+        if (!this.chemin.isEmpty()) {
+            AbstractNode target = this.chemin.get(0);
+            if (!target.getPos().equals(this.actualPos)) {
+                if (target.getPos().height == this.actualPos.height) {
+                    System.out.println("height");
+                    if (target.getPos().width > this.actualPos.width) {
+                        resetDirection(false);
+                        right = true;
+                    } else if (target.getPos().width < this.actualPos.width) {
+                        resetDirection(false);
+                        left = true;
+                    }
+                } else if (target.getPos().width == this.actualPos.width) {
+                    System.out.println("width");
+                    if (target.getPos().height > this.actualPos.height) {
+                        resetDirection(false);
+                        down = true;
+                    } else if (target.getPos().height < this.actualPos.height) {
+                        resetDirection(false);
+                        up = true;
+                    }
+                }
+            } else {
+                this.currentNode = target;
+                resetDirection(false);
+                this.chemin.remove(0);
+            }
+        }
+    }
 
-	public static List<Ghost> getGhosts() {
-		return ghosts;
-	}
+    public List<AbstractNode> getChemin() {
+        return this.chemin;
+    }
 
-	public static void setGhosts(List<Ghost> ghosts) {
-		Ghost.ghosts = ghosts;
-	}
+    public AbstractNode getCurrentNode() {
+        return this.currentNode;
+    }
 
-	public AbstractNode getCurrentNode() {
-		return this.currentNode;
-	}
+    @Override
+    public void move() {
+        this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
+        findDirection();
+        direction();
+    }
 
-	public void setCurrentNode(AbstractNode currentNode) {
-		this.currentNode = currentNode;
-	}
+    @Override
+    public void paint(Graphics g) {
+        g.setColor(Color.PINK);
+        g.fillOval(this.x, this.y, width, height);
+    }
+
+    public void setChemin(List<AbstractNode> chemin) {
+        this.chemin = chemin;
+        // for (AbstractNode node : chemin) {
+        // System.out.println(node);
+        // }
+    }
+
+    public void setCurrentNode(AbstractNode currentNode) {
+        this.currentNode = currentNode;
+    }
 
 }
