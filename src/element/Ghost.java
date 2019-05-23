@@ -30,8 +30,8 @@ public class Ghost extends AbstractPersonnage {
 
 	private AbstractNode currentNode;
 
-	public Ghost(int x, int y, int width, int height) {
-		super(x, y, width, height);
+	public Ghost(int x, int y, int width, int height, int gap) {
+		super(x, y, width, height, gap);
 		ns = NodeService.getInstance();
 		ghs = GhostService.getInstance();
 		if (ghosts == null)
@@ -83,7 +83,9 @@ public class Ghost extends AbstractPersonnage {
 //		A AMELIORER
 		for (double i = 0; i < speed / Const.MAX_FPS; i++) {
 			this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
-			findDirection();
+			this.centered = gs.isCentered(this);
+			if (this.centered)
+				findDirection();
 			direction();
 		}
 	}

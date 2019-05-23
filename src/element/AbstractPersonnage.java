@@ -17,6 +17,7 @@ public abstract class AbstractPersonnage {
 	protected Dimension anchor;
 	protected int gap;
 	protected double speed = 200;
+	protected boolean centered;
 
 	protected GridService gs;
 
@@ -40,7 +41,6 @@ public abstract class AbstractPersonnage {
 		if (this.right) {
 			setAnchorFromType("left");
 			x++;
-
 		}
 		if (this.left) {
 			setAnchorFromType("right");

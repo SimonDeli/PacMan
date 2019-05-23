@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import element.AbstractNode;
 import element.AbstractPersonnage;
 import element.Ghost;
 import element.PacMan;
@@ -36,6 +37,7 @@ public class GamePanel extends JPanel {
 	private GridService gs;
 	private ReadTxtService read;
 	private AbstractPersonnage pacMan;
+	private Ghost ghost1;
 	private FieldService fs;
 	private LinkService ls;
 
@@ -62,8 +64,8 @@ public class GamePanel extends JPanel {
 		pacMan = new PacMan(gs.getPixelFromPosition(spawnPM).width, gs.getPixelFromPosition(spawnPM).height,
 				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
 
-		Ghost ghost1 = new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
-				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW));
+		ghost1 = new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
+				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
 
 		personnages.add(pacMan);
 		personnages.add(ghost1);
@@ -93,8 +95,12 @@ public class GamePanel extends JPanel {
 
 		for (Wall wall : Wall.getWalls())
 			wall.paint(g);
-		// for (AbstractNode node : AbstractNode.getNodes())
-		// node.paint(g);
+//		for (AbstractNode node : AbstractNode.getNodes())
+//			if (node.getPrevious() == null)
+//				node.paint(g);
+		for (AbstractNode node : ghost1.getChemin())
+			node.paint(g);
+
 		for (AbstractPersonnage personnage : personnages)
 			personnage.paint(g);
 

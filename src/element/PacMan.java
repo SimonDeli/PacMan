@@ -16,7 +16,6 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 
 	private static NodeService ns;
 	private boolean tmpRight = false, tmpLeft = false, tmpUp = false, tmpDown = false;
-	private boolean centered;
 
 	private boolean wait = false;
 
