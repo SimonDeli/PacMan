@@ -2,11 +2,15 @@ package GUI;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
@@ -23,7 +27,7 @@ import service.GridService;
 import service.LinkService;
 import service.ReadTxtService;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements KeyListener {
 
 	private static GamePanel instance;
 
@@ -43,6 +47,12 @@ public class GamePanel extends JPanel {
 
 	private GhostService ghs;
 	private long fps;
+	private long startTime;
+
+	private Dimension spawnPM;
+	private Dimension spawnG;
+
+	private boolean displayChemin = false;
 
 	private List<AbstractPersonnage> personnages = new ArrayList<>();
 
@@ -58,23 +68,30 @@ public class GamePanel extends JPanel {
 		fs.createField(data);
 		ls.craeteLink();
 
-		Dimension spawnPM = new Dimension(9, 11);
-		Dimension spawnG = new Dimension(9, 9);
-
+		spawnPM = new Dimension(9, 11);
+		spawnG = new Dimension(9, 9);
+		Ghost.setGhosts(new ArrayList<>());
 		pacMan = new PacMan(gs.getPixelFromPosition(spawnPM).width, gs.getPixelFromPosition(spawnPM).height,
 				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
 
-		ghost1 = new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
-				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
-
 		personnages.add(pacMan);
-		personnages.add(ghost1);
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				if (personnages.size() <= Const.NBR_GHOSTS)
+					personnages.add(
+							new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
+									(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6));
+			}
+		}, 5 * 1000, 5 * 1000);
 
 		// ls.printNodeAndLink();
 
 		this.setPreferredSize(Const.SIZE_F);
 		t = new MainThread(this);
 		t.start();
+		startTime = System.currentTimeMillis();
 	}
 
 	public long getFps() {
@@ -95,15 +112,17 @@ public class GamePanel extends JPanel {
 
 		for (Wall wall : Wall.getWalls())
 			wall.paint(g);
+
 //		for (AbstractNode node : AbstractNode.getNodes())
-//			if (node.getPrevious() == null)
-//				node.paint(g);
-		for (AbstractNode node : ghost1.getChemin())
-			node.paint(g);
+//			node.paint(g);
+		if (displayChemin)
+			for (Ghost ghost : Ghost.getGhosts()) {
+				for (AbstractNode node : ghost.getChemin())
+					node.paint(g);
+			}
 
 		for (AbstractPersonnage personnage : personnages)
 			personnage.paint(g);
-
 	}
 
 	private void reset(Graphics g) {
@@ -127,6 +146,26 @@ public class GamePanel extends JPanel {
 		for (AbstractPersonnage personnage : personnages) {
 			personnage.move();
 		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent key) {
+		int code = key.getKeyCode();
+		if (code == KeyEvent.VK_C)
+			displayChemin = !displayChemin;
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

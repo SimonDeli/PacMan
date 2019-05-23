@@ -9,4 +9,5 @@ public class Const {
 	public final static double MAX_FPS = 60;
 	public final static int MAX_FRAM_SKIPS = 5;
 	public final static double FRAME_PERIOD = 1000 / MAX_FPS;
+	public final static int NBR_GHOSTS = 1;
 }

@@ -171,11 +171,12 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 						otherNode.setType(TypeNode.NODE);
 				if (!this.currentEndNode.equals(current)) {
 					this.currentEndNode = current;
-					for (Ghost ghost : Ghost.getGhosts()) {
-						Dijkstra d = new Dijkstra(ghost.getCurrentNode());
-						List<AbstractNode> chemin = d.runAlgorithm();
-						ghost.setChemin(chemin);
-					}
+					if (!Ghost.getGhosts().isEmpty())
+						for (Ghost ghost : Ghost.getGhosts()) {
+							Dijkstra d = new Dijkstra(ghost.getCurrentNode());
+							List<AbstractNode> chemin = d.runAlgorithm();
+							ghost.setChemin(chemin);
+						}
 				}
 			}
 		}

@@ -22,8 +22,10 @@ public class Dijkstra {
 
 	public List<AbstractNode> runAlgorithm() {
 		ns.initNodeVisited();
-		ns.initNodeWeight();
 		AbstractNode currentNode = beginNode;
+		ns.initNodeType(beginNode);
+		ns.initNodeWeight();
+
 		int security = 0;
 		while (!ns.isAllVisited()) {
 			currentNode.setVisited(true);
@@ -34,12 +36,6 @@ public class Dijkstra {
 			if (security > AbstractNode.getNodes().size())
 				break;
 		}
-		for (AbstractNode node : AbstractNode.getNodes())
-			if (node.getType().equals(TypeNode.END))
-				this.weightFinal = node.getWeight();
-			else
-				this.weightFinal = -1;
-
 		return getClosestWay();
 	}
 
@@ -88,6 +84,7 @@ public class Dijkstra {
 			AbstractNode previous = null;
 			if (current.getPrevious() != null)
 				previous = current.getPrevious();
+
 			result.add(previous);
 			current = previous;
 		}

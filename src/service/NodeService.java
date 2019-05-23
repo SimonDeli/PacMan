@@ -56,6 +56,14 @@ public class NodeService {
 		}
 	}
 
+	public void initNodeType(AbstractNode begin) {
+		for (AbstractNode node : AbstractNode.getNodes()) {
+			if (!node.getType().equals(TypeNode.END))
+				node.setType(TypeNode.NODE);
+		}
+		begin.setType(TypeNode.BEGIN);
+	}
+
 	public AbstractNode getNode(TypeNode type, int x, int y) {
 		return new Node(x, y, type);
 	}

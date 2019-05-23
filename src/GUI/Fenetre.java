@@ -26,6 +26,7 @@ public class Fenetre extends JFrame {
 		this.setContentPane(gp);
 		this.setBackground(Color.DARK_GRAY);
 		this.addKeyListener((KeyListener) gp.getPacMan());
+		this.addKeyListener(gp);
 		this.setVisible(true);
 		this.pack();
 	}
