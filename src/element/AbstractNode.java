@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.GridException;
 import misc.TypeNode;
 import service.GridService;
 
@@ -31,11 +32,11 @@ public abstract class AbstractNode {
 
 	protected TypeNode type;
 
-	public AbstractNode() {
+	public AbstractNode() throws GridException {
 		this(0, 0, TypeNode.NODE);
 	}
 
-	public AbstractNode(int x, int y, TypeNode type) {
+	public AbstractNode(int x, int y, TypeNode type) throws GridException {
 		gs = GridService.getInstance();
 		this.id = compteur;
 		this.type = type;

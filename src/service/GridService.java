@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import element.AbstractNode;
 import element.AbstractPersonnage;
 import element.Wall;
+import exception.GridException;
 import misc.Const;
 
 public class GridService {
@@ -40,7 +41,10 @@ public class GridService {
 		}
 	}
 
-	public Dimension getPositionFromPixel(Dimension pixel) {
+	public Dimension getPositionFromPixel(Dimension pixel) throws GridException {
+		if (pixel == null)
+			throw new GridException("Can't calculate the position if pixel is null");
+
 		Dimension result = new Dimension();
 		double x = Math.floor((float) (pixel.width * Const.NBR_COL) / (float) Const.SIZE_F.width);
 		double y = Math.floor((float) (pixel.height * Const.NBR_ROW) / (float) Const.SIZE_F.height);
@@ -49,7 +53,10 @@ public class GridService {
 		return result;
 	}
 
-	public Dimension getPixelFromPosition(Dimension position) {
+	public Dimension getPixelFromPosition(Dimension position) throws GridException {
+		if (position == null)
+			throw new GridException("Can't calculate the pixel if position is null");
+
 		Dimension result = new Dimension();
 		int px = position.width;
 		int py = position.height;
@@ -61,7 +68,10 @@ public class GridService {
 		return result;
 	}
 
-	public String getTypeFromPos(Dimension pos) {
+	public String getElementFromPos(Dimension pos) throws GridException {
+		if (pos == null)
+			throw new GridException("Can't get the element is pos is null");
+
 		for (AbstractNode node : AbstractNode.getNodes())
 			if (node.getPos().equals(pos))
 				return "node";
@@ -81,9 +91,7 @@ public class GridService {
 		modX = (modX == 1 || modX == -1) ? 0 : modX;
 		modY = (modY == 1 || modY == -1) ? 0 : modY;
 
-		if (modX == 0 && modY == 0)
-			return true;
-		return false;
+		return (modX == 0 && modY == 0);
 	}
 
 	public float getWidthCol() {

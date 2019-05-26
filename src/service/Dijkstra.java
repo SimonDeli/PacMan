@@ -6,6 +6,8 @@ import java.util.List;
 
 import element.AbstractNode;
 import element.Link;
+import exception.DijkstraException;
+import exception.LinkException;
 import misc.TypeNode;
 
 public class Dijkstra {
@@ -20,7 +22,10 @@ public class Dijkstra {
 		this.beginNode = beginNode;
 	}
 
-	public List<AbstractNode> runAlgorithm() {
+	public List<AbstractNode> runAlgorithm() throws DijkstraException, LinkException {
+		if (AbstractNode.getNodes() == null || AbstractNode.getNodes().isEmpty())
+			throw new DijkstraException();
+
 		ns.initNodeVisited();
 		AbstractNode currentNode = beginNode;
 		ns.initNodeType(beginNode);
@@ -30,16 +35,19 @@ public class Dijkstra {
 		while (!ns.isAllVisited()) {
 			currentNode.setVisited(true);
 			updateNodeWeight(currentNode);
-			List<AbstractNode> knownNodes = getAllKnownNodes(AbstractNode.getNodes());
+			List<AbstractNode> knownNodes = getAllKnownNodes();
 			currentNode = getNodeWithSmallestWeight(knownNodes);
 			security++;
 			if (security > AbstractNode.getNodes().size())
-				break;
+				throw new DijkstraException("Problem on while condition.");
 		}
 		return getClosestWay();
 	}
 
-	private void updateNodeWeight(AbstractNode currentNode) {
+	private void updateNodeWeight(AbstractNode currentNode) throws LinkException {
+		if (currentNode.getLinks() == null || currentNode.getLinks().isEmpty())
+			throw new LinkException("Node number " + currentNode.getId() + " has no Links");
+
 		for (Link link : currentNode.getLinks()) {
 			AbstractNode noeudTarget = link.getTarget();
 			float weight = noeudTarget.getWeight(); // poids du noeuds "target"
@@ -50,9 +58,9 @@ public class Dijkstra {
 		}
 	}
 
-	private List<AbstractNode> getAllKnownNodes(List<AbstractNode> list) {
+	private List<AbstractNode> getAllKnownNodes() {
 		List<AbstractNode> result = new ArrayList<>();
-		for (AbstractNode node : list) {
+		for (AbstractNode node : AbstractNode.getNodes()) {
 			if (node.getWeight() != -1 && !node.isVisited()) {
 				result.add(node);
 			}
@@ -60,7 +68,10 @@ public class Dijkstra {
 		return result;
 	}
 
-	private AbstractNode getNodeWithSmallestWeight(List<AbstractNode> knownNodes) {
+	private AbstractNode getNodeWithSmallestWeight(List<AbstractNode> knownNodes) throws DijkstraException {
+		if (knownNodes == null)
+			throw new DijkstraException("The know nodes list is null");
+
 		AbstractNode result = null;
 		float weight = -1;
 		for (AbstractNode node : knownNodes) {
@@ -72,13 +83,16 @@ public class Dijkstra {
 		return result;
 	}
 
-	public List<AbstractNode> getClosestWay() {
+	public List<AbstractNode> getClosestWay() throws DijkstraException {
 		List<AbstractNode> result = new ArrayList<>();
 		AbstractNode current = AbstractNode.getNodes().get(0);
-		for (AbstractNode node : AbstractNode.getNodes()) {
+		for (AbstractNode node : AbstractNode.getNodes())
 			if (node.getType().equals(TypeNode.END))
 				current = node;
-		}
+
+		if (!current.getType().equals(TypeNode.END))
+			throw new DijkstraException("There are no EndNode on the list");
+
 		result.add(current);
 		while (!(beginNode.equals(current))) {
 			AbstractNode previous = null;

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 
 import element.AbstractNode;
 import element.Node;
+import exception.GridException;
 import misc.TypeNode;
 
 public class NodeService {
@@ -64,7 +65,7 @@ public class NodeService {
 		begin.setType(TypeNode.BEGIN);
 	}
 
-	public AbstractNode getNode(TypeNode type, int x, int y) {
+	public AbstractNode getNode(TypeNode type, int x, int y) throws GridException {
 		return new Node(x, y, type);
 	}
 }

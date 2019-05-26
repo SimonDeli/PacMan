@@ -19,10 +19,12 @@ import element.AbstractPersonnage;
 import element.Ghost;
 import element.PacMan;
 import element.Wall;
+import exception.FieldException;
+import exception.GridException;
+import exception.LinkException;
 import main.MainThread;
 import misc.Const;
 import service.FieldService;
-import service.GhostService;
 import service.GridService;
 import service.LinkService;
 import service.ReadTxtService;
@@ -31,7 +33,8 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	private static GamePanel instance;
 
-	public static synchronized GamePanel getInstance() throws IOException {
+	public static synchronized GamePanel getInstance()
+			throws IOException, FieldException, LinkException, GridException {
 		if (instance == null)
 			instance = new GamePanel();
 		return instance;
@@ -41,13 +44,10 @@ public class GamePanel extends JPanel implements KeyListener {
 	private GridService gs;
 	private ReadTxtService read;
 	private AbstractPersonnage pacMan;
-	private Ghost ghost1;
 	private FieldService fs;
 	private LinkService ls;
 
-	private GhostService ghs;
 	private long fps;
-	private long startTime;
 
 	private Dimension spawnPM;
 	private Dimension spawnG;
@@ -56,21 +56,19 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	private List<AbstractPersonnage> personnages = new ArrayList<>();
 
-	private GamePanel() throws IOException {
+	private GamePanel() throws IOException, FieldException, LinkException, GridException {
 		super();
 		gs = GridService.getInstance();
 		fs = FieldService.getInstance();
 		ls = LinkService.getInstance();
 		read = ReadTxtService.getInstance(new File("terrain.txt"));
 		Map<Integer, List<String>> data = read.readFile();
-		ghs = GhostService.getInstance();
 
 		fs.createField(data);
 		ls.craeteLink();
 
 		spawnPM = new Dimension(9, 11);
 		spawnG = new Dimension(9, 9);
-		Ghost.setGhosts(new ArrayList<>());
 		pacMan = new PacMan(gs.getPixelFromPosition(spawnPM).width, gs.getPixelFromPosition(spawnPM).height,
 				(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6);
 
@@ -80,18 +78,19 @@ public class GamePanel extends JPanel implements KeyListener {
 			@Override
 			public void run() {
 				if (personnages.size() <= Const.NBR_GHOSTS)
-					personnages.add(
-							new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
-									(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6));
+					try {
+						personnages.add(new Ghost(gs.getPixelFromPosition(spawnG).width,
+								gs.getPixelFromPosition(spawnG).height, (Const.SIZE_F.width / Const.NBR_COL),
+								(Const.SIZE_F.height / Const.NBR_ROW), 6));
+					} catch (GridException e) {
+						e.printStackTrace();
+					}
 			}
 		}, 3 * 1000, 3 * 1000);
-
-		// ls.printNodeAndLink();
 
 		this.setPreferredSize(Const.SIZE_F);
 		t = new MainThread(this);
 		t.start();
-		startTime = System.currentTimeMillis();
 	}
 
 	public long getFps() {
@@ -158,13 +157,11 @@ public class GamePanel extends JPanel implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 

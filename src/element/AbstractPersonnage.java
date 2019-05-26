@@ -3,6 +3,7 @@ package element;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
+import exception.GridException;
 import service.GridService;
 
 public abstract class AbstractPersonnage {
@@ -21,11 +22,11 @@ public abstract class AbstractPersonnage {
 
 	protected GridService gs;
 
-	public AbstractPersonnage(double x, double y, int width, int height) {
+	public AbstractPersonnage(double x, double y, int width, int height) throws GridException {
 		this(x, y, width, height, 2);
 	}
 
-	public AbstractPersonnage(double x, double y, int width, int height, int gap) {
+	public AbstractPersonnage(double x, double y, int width, int height, int gap) throws GridException {
 		gs = GridService.getInstance();
 
 		this.x = x + gap / 2;

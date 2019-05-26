@@ -42,8 +42,4 @@ public class MainThread extends Thread {
 			}
 		}
 	};
-
-	private void storeStats() {
-
-	}
 }

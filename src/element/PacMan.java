@@ -7,31 +7,37 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
 
+import exception.DijkstraException;
+import exception.GridException;
+import exception.LinkException;
 import misc.Const;
 import misc.TypeNode;
 import service.Dijkstra;
+import service.GhostService;
 import service.NodeService;
 
 public class PacMan extends AbstractPersonnage implements KeyListener {
 
-	private static NodeService ns;
+	private NodeService ns;
 	private boolean tmpRight = false, tmpLeft = false, tmpUp = false, tmpDown = false;
 
 	private boolean wait = false;
 
 	private Dimension destinationPos;
 	private String dir = "";
+	private GhostService ghs;
 
 	private AbstractNode currentEndNode;
 
-	public PacMan(int x, int y, int width, int height, int gap) {
+	public PacMan(int x, int y, int width, int height, int gap) throws GridException {
 		super(x, y, width, height, gap);
 		ns = NodeService.getInstance();
+		ghs = GhostService.getInstance();
 		this.destinationPos = actualPos;
 		this.currentEndNode = ns.getNodeByPos(this.actualPos);
 	}
 
-	private void interval() {
+	private void interval() throws DijkstraException, LinkException {
 		if (centered) {
 			setDestinationPosFromDir(this.dir);
 			setIntervalEndNode();
@@ -142,9 +148,17 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 	public void move() {
 //		A AMELIORER
 		for (double i = 0; i < speed / Const.MAX_FPS; i++) {
-			this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
+			try {
+				this.actualPos = gs.getPositionFromPixel(new Dimension(this.anchor.width, this.anchor.height));
+			} catch (GridException e) {
+				e.printStackTrace();
+			}
 			this.centered = gs.isCentered(this);
-			interval();
+			try {
+				interval();
+			} catch (DijkstraException | LinkException e) {
+				e.printStackTrace();
+			}
 			if (wait)
 				waitToMove();
 			if (!isCollide())
@@ -198,7 +212,7 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 	}
 
 	// A OPTIMISER
-	private void setIntervalEndNode() {
+	private void setIntervalEndNode() throws DijkstraException, LinkException {
 		for (AbstractNode node : AbstractNode.getNodes()) {
 			if (this.actualPos.equals(node.getPos())) {
 				node.setType(TypeNode.END);
@@ -208,12 +222,11 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 						otherNode.setType(TypeNode.NODE);
 				if (!this.currentEndNode.equals(current)) {
 					this.currentEndNode = current;
-					if (!Ghost.getGhosts().isEmpty())
-						for (Ghost ghost : Ghost.getGhosts()) {
-							Dijkstra d = new Dijkstra(ghost.getCurrentNode());
-							List<AbstractNode> chemin = d.runAlgorithm();
-							ghost.setChemin(chemin);
-						}
+					for (Ghost ghost : ghs.getGhosts()) {
+						Dijkstra d = new Dijkstra(ghost.getCurrentNode());
+						List<AbstractNode> chemin = d.runAlgorithm();
+						ghost.setChemin(chemin);
+					}
 				}
 			}
 		}

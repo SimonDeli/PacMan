@@ -7,6 +7,9 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import element.PacMan;
+import exception.FieldException;
+import exception.GridException;
+import exception.LinkException;
 import misc.Const;
 
 public class Fenetre extends JFrame {
@@ -14,7 +17,7 @@ public class Fenetre extends JFrame {
 	public GamePanel gp;
 	public PacMan pacMan;
 
-	public Fenetre(String name) throws IOException {
+	public Fenetre(String name) throws IOException, FieldException, LinkException, GridException {
 		super(name);
 
 		gp = GamePanel.getInstance();

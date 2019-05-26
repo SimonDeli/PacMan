@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import exception.GridException;
 import service.GridService;
 
 public class Wall {
@@ -19,7 +20,7 @@ public class Wall {
 	private static List<Wall> walls;
 	private GridService gs;
 
-	public Wall(int x, int y) {
+	public Wall(int x, int y) throws GridException {
 		this.gs = GridService.getInstance();
 		this.x = x;
 		this.y = y;

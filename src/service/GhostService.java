@@ -1,8 +1,11 @@
 package service;
 
-public class GhostService {
+import java.util.ArrayList;
+import java.util.List;
 
-	private Dijkstra dijkstra;
+import element.Ghost;
+
+public class GhostService {
 
 	private static GhostService instance;
 
@@ -16,7 +19,9 @@ public class GhostService {
 		return instance;
 	}
 
-//	public Ghost createGhost(int x, int y, int width, int height) {
-//		return new Ghost(x, y, width, height);
-//	}
+	public List<Ghost> getGhosts() {
+		if (Ghost.getGhosts() == null || Ghost.getGhosts().isEmpty())
+			return new ArrayList<Ghost>();
+		return Ghost.getGhosts();
+	}
 }
