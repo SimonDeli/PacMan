@@ -84,7 +84,7 @@ public class GamePanel extends JPanel implements KeyListener {
 							new Ghost(gs.getPixelFromPosition(spawnG).width, gs.getPixelFromPosition(spawnG).height,
 									(Const.SIZE_F.width / Const.NBR_COL), (Const.SIZE_F.height / Const.NBR_ROW), 6));
 			}
-		}, 5 * 1000, 5 * 1000);
+		}, 3 * 1000, 3 * 1000);
 
 		// ls.printNodeAndLink();
 

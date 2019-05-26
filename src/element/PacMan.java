@@ -45,6 +45,36 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 		return false;
 	}
 
+	private boolean checkOnPress(String nextDirection) {
+		if (up || down) {
+			if ("right".equals(nextDirection)) {
+				Dimension check = new Dimension(this.destinationPos.width + 1, this.destinationPos.height);
+				if (Wall.getDim().contains(check)) {
+					return true;
+				}
+			} else if ("left".equals(nextDirection)) {
+				Dimension check = new Dimension(this.destinationPos.width - 1, this.destinationPos.height);
+				if (Wall.getDim().contains(check)) {
+					return true;
+				}
+			}
+		} else if (left || right) {
+			if ("up".equals(nextDirection)) {
+				Dimension check = new Dimension(this.destinationPos.width, this.destinationPos.height - 1);
+				if (Wall.getDim().contains(check)) {
+					return true;
+				}
+			} else if ("down".equals(nextDirection)) {
+				Dimension check = new Dimension(this.destinationPos.width, this.destinationPos.height + 1);
+				if (Wall.getDim().contains(check)) {
+					return true;
+				}
+			}
+		}
+		return false;
+
+	}
+
 	@Override
 	public void keyPressed(KeyEvent key) {
 		int code = key.getKeyCode();
@@ -54,41 +84,46 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 				if (up || down) {
 					resetDirection(false);
 					up = true;
-				} else {
+					dir = "up";
+				} else if (!checkOnPress("up")) {
 					tmpUp = true;
 					wait = true;
+					dir = "up";
 				}
-				dir = "up";
+//				dir = "up";
 				break;
 			case KeyEvent.VK_DOWN:
 				if (up || down) {
 					resetDirection(false);
 					down = true;
-				} else {
+					dir = "down";
+				} else if (!checkOnPress("down")) {
 					tmpDown = true;
 					wait = true;
+					dir = "down";
 				}
-				dir = "down";
 				break;
 			case KeyEvent.VK_LEFT:
 				if (left || right) {
 					resetDirection(false);
 					left = true;
-				} else {
+					dir = "left";
+				} else if ((!checkOnPress("left"))) {
 					tmpLeft = true;
 					wait = true;
+					dir = "left";
 				}
-				dir = "left";
 				break;
 			case KeyEvent.VK_RIGHT:
 				if (left || right) {
 					resetDirection(false);
 					right = true;
-				} else {
+					dir = "right";
+				} else if ((!checkOnPress("right"))) {
 					tmpRight = true;
 					wait = true;
+					dir = "right";
 				}
-				dir = "right";
 				break;
 			}
 	}
@@ -114,6 +149,8 @@ public class PacMan extends AbstractPersonnage implements KeyListener {
 				waitToMove();
 			if (!isCollide())
 				direction();
+			else
+				resetDirection(false);
 		}
 	}
 
